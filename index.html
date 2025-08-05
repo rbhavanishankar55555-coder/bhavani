@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .form-control:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        
+        .installment-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #4facfe;
+        }
+        
+        .installment-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .installment-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .output-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 2px dashed #4facfe;
+        }
+        
+        .receipt-output {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            border: 1px solid #dee2e6;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        
+        .section-title {
+            color: #4facfe;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .amount-display {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .installment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-section {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+            
+            .installment-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .installment-header {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .installment-header h5 {
+                font-size: 1rem;
+            }
+            
+            .installment-item {
+                padding: 10px;
+                margin: 8px 0;
+            }
+            
+            .receipt-output {
+                font-size: 11px;
+                padding: 15px;
+                max-height: 400px;
+            }
+            
+            .output-section {
+                padding: 15px;
+                margin-top: 20px;
+            }
+            
+            .btn-primary, .btn-success {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .form-control {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .row .col-md-4 {
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .receipt-output {
+                font-size: 10px;
+                line-height: 1.4;
+            }
+            
+            .btn-primary, .btn-success {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .d-flex.justify-content-between .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="main-container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1><i class="fas fa-receipt me-3"></i>Payment Receipt Generator</h1>
+                        <p class="mb-0">Professional payment receipt with installment tracking</p>
+                    </div>
+                    
+                    <!-- Form Section -->
+                    <div class="form-section">
+                        <div class="row">
+                            <!-- Personal Details -->
+                            <div class="col-lg-6">
+                                <h4 class="section-title">
+                                    <i class="fas fa-user"></i>
+                                    Personal Details
+                                </h4>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="fullName" placeholder="Enter full name">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Email ID</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Enter email address">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="phone" placeholder="Enter phone number">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address" placeholder="Enter complete address">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Pincode</label>
+                                    <input type="text" class="form-control" id="pincode" placeholder="Enter pincode">
+                                </div>
+                            </div>
+                            
+                            <!-- Course & Payment Details -->
+                            <div class="col-lg-6">
+                                <h4 class="section-title">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Course & Payment Details
+                                </h4>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Course Name</label>
+                                    <input type="text" class="form-control" id="courseName" placeholder="Enter course name" oninput="autoFillCertification()">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Certification</label>
+                                    <input type="text" class="form-control" id="certification" placeholder="Auto-filled from course name">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Payment Type</label>
+                                    <select class="form-control" id="paymentType">
+                                        <option value="">Select payment type</option>
+                                        <option value="online">Online</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="cheque">Cheque</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Payment Date</label>
+                                    <input type="date" class="form-control" id="paymentDate">
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Total Amount</label>
+                                        <input type="number" class="form-control" id="totalAmount" placeholder="0" onchange="calculateBalance()">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Paid Amount</label>
+                                        <input type="number" class="form-control" id="paidAmount" placeholder="0" onchange="calculateBalance()">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Balance Payment</label>
+                                        <input type="number" class="form-control" id="balancePayment" placeholder="0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Installment Section -->
+                        <div class="installment-section">
+                            <div class="installment-header">
+                                <h5><i class="fas fa-calendar-alt me-2"></i>Installment Details (Optional)</h5>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="enableInstallments" onchange="toggleInstallments()">
+                                        <label class="form-check-label fw-bold" for="enableInstallments">
+                                            Enable Installments
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3" id="installmentCountDiv" style="display: none;">
+                                    <label class="form-label">Number of Installments</label>
+                                    <select class="form-control" id="installmentCount" onchange="generateInstallments()">
+                                        <option value="1">1 Installment</option>
+                                        <option value="2">2 Installments</option>
+                                        <option value="3">3 Installments</option>
+                                        <option value="4">4 Installments</option>
+                                        <option value="5">5 Installments</option>
+                                        <option value="6">6 Installments</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3" id="firstInstallmentDiv" style="display: none;">
+                                    <label class="form-label">First Installment Date</label>
+                                    <input type="date" class="form-control" id="firstInstallmentDate" onchange="generateInstallments()">
+                                </div>
+                            </div>
+                            
+                            <div id="installmentsContainer" style="display: none;">
+                                <!-- Installments will be generated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Generate Button -->
+                        <div class="text-center">
+                            <button class="btn btn-primary btn-lg" onclick="generateReceipt()">
+                                <i class="fas fa-magic me-2"></i>Generate Receipt
+                            </button>
+                        </div>
+                        
+                        <!-- Output Section -->
+                        <div class="output-section" id="outputSection" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="section-title mb-0">
+                                    <i class="fas fa-file-alt"></i>
+                                    Generated Receipt
+                                </h4>
+                                <div>
+                                    <button class="btn btn-success me-2" onclick="copyToClipboard()">
+                                        <i class="fas fa-copy me-1"></i>Copy to Clipboard
+                                    </button>
+                                    <button class="btn btn-primary" onclick="downloadReceipt()">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="position-relative">
+                                <div class="receipt-output" id="receiptOutput"></div>
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    You can copy this text and paste it anywhere - WhatsApp, Notepad, Email, etc.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('firstInstallmentDate').value = new Date().toISOString().split('T')[0];
+        });
+
+        function autoFillCertification() {
+            const courseName = document.getElementById('courseName').value;
+            document.getElementById('certification').value = courseName;
+        }
+
+        function toggleInstallments() {
+            const isEnabled = document.getElementById('enableInstallments').checked;
+            const countDiv = document.getElementById('installmentCountDiv');
+            const dateDiv = document.getElementById('firstInstallmentDiv');
+            const container = document.getElementById('installmentsContainer');
+            
+            if (isEnabled) {
+                countDiv.style.display = 'block';
+                dateDiv.style.display = 'block';
+                container.style.display = 'block';
+                generateInstallments();
+            } else {
+                countDiv.style.display = 'none';
+                dateDiv.style.display = 'none';
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+        }
+
+        function calculateBalance() {
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
+            const paidAmount = parseFloat(document.getElementById('paidAmount').value) || 0;
+            const balance = totalAmount - paidAmount;
+            document.getElementById('balancePayment').value = balance;
+            
+            // Regenerate installments if they are enabled
+            if (document.getElementById('enableInstallments').checked) {
+                generateInstallments();
+            }
+        }
+
+        function generateInstallments() {
+            if (!document.getElementById('enableInstallments').checked) {
+                return;
+            }
+            
+            const installmentCount = parseInt(document.getElementById('installmentCount').value);
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
+            const paidAmount = parseFloat(document.getElementById('paidAmount').value) || 0;
+            const firstDateValue = document.getElementById('firstInstallmentDate').value;
+            
+            if (!firstDateValue || totalAmount <= 0) {
+                return;
+            }
+            
+            const firstDate = new Date(firstDateValue);
+            const container = document.getElementById('installmentsContainer');
+            
+            container.innerHTML = '';
+            
+            // Calculate remaining amount after first installment (paid amount)
+            const remainingAfterFirst = totalAmount - paidAmount;
+            const remainingInstallments = installmentCount - 1;
+            const amountPerRemainingInstallment = remainingInstallments > 0 ? Math.round(remainingAfterFirst / remainingInstallments) : 0;
+            
+            let remainingAmount = remainingAfterFirst;
+            
+            for (let i = 1; i <= installmentCount; i++) {
+                const installmentDate = new Date(firstDate);
+                installmentDate.setMonth(installmentDate.getMonth() + (i - 1));
+                
+                let installmentAmount;
+                let statusBadge;
+                
+                if (i === 1) {
+                    // First installment is the paid amount
+                    installmentAmount = paidAmount;
+                    statusBadge = '<span class="status-badge" style="background: #28a745;">Paid</span>';
+                } else if (i === installmentCount && remainingInstallments > 0) {
+                    // Last installment gets remaining amount to handle rounding
+                    installmentAmount = remainingAmount;
+                    statusBadge = '<span class="status-badge" style="background: #dc3545;">Due</span>';
+                } else {
+                    // Other installments get equal amounts
+                    installmentAmount = amountPerRemainingInstallment;
+                    remainingAmount -= amountPerRemainingInstallment;
+                    statusBadge = '<span class="status-badge" style="background: #dc3545;">Due</span>';
+                }
+                
+                const installmentDiv = document.createElement('div');
+                installmentDiv.className = 'installment-item';
+                installmentDiv.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-6 col-md-3 mb-2 mb-md-0">
+                            <strong>Installment ${i}</strong>
+                        </div>
+                        <div class="col-6 col-md-4 mb-2 mb-md-0">
+                            <label class="form-label d-md-none">Amount:</label>
+                            <input type="number" class="form-control" id="installment${i}Amount" value="${installmentAmount}" onchange="updateInstallmentTotal()" placeholder="Amount">
+                        </div>
+                        <div class="col-6 col-md-4 mb-2 mb-md-0">
+                            <label class="form-label d-md-none">Date:</label>
+                            <input type="date" class="form-control" id="installment${i}Date" value="${installmentDate.toISOString().split('T')[0]}">
+                        </div>
+                        <div class="col-6 col-md-1 text-center">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(installmentDiv);
+            }
+        }
+
+        function updateInstallmentTotal() {
+            const installmentCount = parseInt(document.getElementById('installmentCount').value);
+            let total = 0;
+            
+            for (let i = 1; i <= installmentCount; i++) {
+                const amount = parseFloat(document.getElementById(`installment${i}Amount`).value) || 0;
+                total += amount;
+            }
+            
+            document.getElementById('totalAmount').value = total;
+            calculateBalance();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function generateReceipt() {
+            const fullName = document.getElementById('fullName').value || 'N/A';
+            const email = document.getElementById('email').value || 'N/A';
+            const phone = document.getElementById('phone').value || 'N/A';
+            const address = document.getElementById('address').value || 'N/A';
+            const pincode = document.getElementById('pincode').value || 'N/A';
+            const courseName = document.getElementById('courseName').value || 'N/A';
+            const certification = document.getElementById('certification').value || 'N/A';
+            const paymentType = document.getElementById('paymentType').value || 'N/A';
+            const paymentDate = document.getElementById('paymentDate').value ? formatDate(document.getElementById('paymentDate').value) : 'N/A';
+            const totalAmount = document.getElementById('totalAmount').value || '0';
+            const paidAmount = document.getElementById('paidAmount').value || '0';
+            const balancePayment = document.getElementById('balancePayment').value || '0';
+            
+            let installmentDetails = '';
+            const isInstallmentEnabled = document.getElementById('enableInstallments').checked;
+            
+            if (isInstallmentEnabled) {
+                const installmentCount = parseInt(document.getElementById('installmentCount').value);
+                for (let i = 1; i <= installmentCount; i++) {
+                    const amountElement = document.getElementById(`installment${i}Amount`);
+                    const dateElement = document.getElementById(`installment${i}Date`);
+                    if (amountElement && dateElement) {
+                        const amount = amountElement.value || '0';
+                        const date = formatDate(dateElement.value);
+                        installmentDetails += `Installment ${i}: ₹${amount} on ${date}\n`;
+                    }
+                }
+            }
+
+            let receiptText = `
+═══════════════════════════════════════════════════
+                    PAYMENT RECEIPT
+═══════════════════════════════════════════════════
+
+📋 PERSONAL DETAILS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Full Name: ${fullName}
+Email ID: ${email}
+Phone: ${phone}
+Address: ${address}
+Pincode: ${pincode}
+
+🎓 COURSE DETAILS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Course Name: ${courseName}
+Certification: ${certification}
+
+💳 PAYMENT INFORMATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Payment Type: ${paymentType.toUpperCase()}
+Payment Date: ${paymentDate}
+Total Amount: ₹${totalAmount}
+Paid Amount: ₹${paidAmount}
+Balance Payment: ₹${balancePayment}`;
+
+            if (isInstallmentEnabled && installmentDetails.trim()) {
+                receiptText += `
+
+📅 INSTALLMENT SCHEDULE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${installmentDetails}`;
+            }
+
+            receiptText = receiptText.trim();
+
+            document.getElementById('receiptOutput').textContent = receiptText;
+            document.getElementById('outputSection').style.display = 'block';
+            
+            // Scroll to output section
+            document.getElementById('outputSection').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        function copyToClipboard() {
+            const receiptText = document.getElementById('receiptOutput').textContent;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(receiptText).then(() => {
+                    showNotification('✅ Receipt copied to clipboard!', 'success');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(receiptText);
+                });
+            } else {
+                fallbackCopyTextToClipboard(receiptText);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification('✅ Receipt copied to clipboard!', 'success');
+            } catch (err) {
+                showNotification('❌ Failed to copy. Please select and copy manually.', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function downloadReceipt() {
+            const receiptText = document.getElementById('receiptOutput').textContent;
+            const fullName = document.getElementById('fullName').value.replace(/\s+/g, '_');
+            const filename = `Payment_Receipt_${fullName}_${Date.now()}.txt`;
+            
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(receiptText));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            
+            showNotification('📥 Receipt downloaded successfully!', 'success');
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border-radius: 10px;
+            `;
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Auto-calculate balance when amounts change
+        document.getElementById('totalAmount').addEventListener('input', calculateBalance);
+        document.getElementById('paidAmount').addEventListener('input', calculateBalance);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a4842e377c9a77',t:'MTc1NDM3ODI2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
